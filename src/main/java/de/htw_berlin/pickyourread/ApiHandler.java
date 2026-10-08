@@ -19,8 +19,7 @@ public class ApiHandler {
     ObjectMapper om = new ObjectMapper();
     
     public ResponseEntity<Object> searchBook(String query){
-        ResponseEntity<Object> result = restTemplate.getForEntity(uriSearch+query, Object.class);
-        return result;
+        return restTemplate.getForEntity(uriSearch+query, Object.class);
     }
 
     public Map<String,Object> searchBookBody(String query) {
