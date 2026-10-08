@@ -1,8 +1,10 @@
 package de.htw_berlin.pickyourread;
 
 import java.util.List;
+import java.util.Map;
 
 import de.htw_berlin.pickyourread.exceptions.InvalidISBNException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Date;
 
@@ -21,6 +23,12 @@ public class Book {
         this.author = author;
     }
 
+    public Book(Map<String,Object> bookData) {
+        ObjectMapper om = new ObjectMapper();
+        this.setTitle(om.convertValue(bookData.get("title"),String.class));
+        this.setCover(om.convertValue(bookData.get("cover_i"),String.class));
+    }
+
     //======================
     //      Attributes
     //======================
@@ -32,6 +40,7 @@ public class Book {
     String publisher;
     String apiKey;
     String series;
+    String cover;
     List<String> genre;
     List<String> tags;
     Date releaseDate;
@@ -66,6 +75,14 @@ public class Book {
     }
     public String getSeries() {
         return series;
+    }
+    public List<String> getCover() {
+        List<String> coverSizes = List.of(
+            "https://covers.openlibrary.org/b/id/"+cover+"-S.jpg",
+            "https://covers.openlibrary.org/b/id/"+cover+"-M.jpg",
+            "https://covers.openlibrary.org/b/id/"+cover+"-L.jpg"
+        );
+        return coverSizes;
     }
     public List<String> getGenre() {
         return genre;
@@ -127,6 +144,9 @@ public class Book {
     }
     public void setSeries(String series) {
         this.series = series;
+    }
+    public void setCover(String coverID) {
+        this.cover = coverID;
     }
     public void setGenre(List<String> genre) {
         this.genre = genre;
