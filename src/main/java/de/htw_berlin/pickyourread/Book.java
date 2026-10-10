@@ -27,6 +27,7 @@ public class Book {
         ObjectMapper om = new ObjectMapper();
         this.setTitle(om.convertValue(bookData.get("title"),String.class));
         this.setCover(om.convertValue(bookData.get("cover_i"),String.class));
+        this.setApiKey(om.convertValue(bookData.get("key"), String.class));
     }
 
     //======================
@@ -203,28 +204,26 @@ public class Book {
         if(len != 13 && len != 10) throw invalid;
 
         if (len == 13) {
-
             int checkSum = 0;
-            
             for (int i = 1; i < 14 ;i++) {
                 if (i % 2 == 0) checkSum += 3*checkString.charAt(i-1);
                 else checkSum += checkString.charAt(i-1);
             }
-
             if (checkSum % 10 != 0) throw invalid;
 
         } else {
-            int checkSum = 0;
+            int checkSum = checkString.charAt(9);
             int j = 0;
             for (int i = 10; i > 1 ;i--) {
                 checkSum += i*checkString.charAt(j);
                 j++;
             }
-
-            checkSum += checkString.charAt(9);
-
             if (checkSum % 11 != 0) throw invalid;
         }
 
+    }
+
+    public void update(Map<String,Object> bookData) { // TODO: update Bookdata from bookData-Map
+        //ObjectMapper om = new ObjectMapper();
     }
 }
