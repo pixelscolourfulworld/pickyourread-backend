@@ -34,7 +34,7 @@ public class PickyourreadController {
     String query = "the+lord+of+the+rings";
 
     switch (test) {
-      case "full" : return apiHandler.searchBook(query);
+      case "full" : return apiHandler.callSearch(query);
       case "body" : return apiHandler.searchBookBody(query);
       case "books" : return apiHandler.searchBookBooks(query);
       case "booklist" :
