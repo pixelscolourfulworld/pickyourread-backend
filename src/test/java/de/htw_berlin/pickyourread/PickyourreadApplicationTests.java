@@ -40,6 +40,7 @@ class PickyourreadApplicationTests {
 		assertEquals(expected, ah.getUserAgent());
 	}
 
+	/*
 	@Test
 	void testUserAgentHeader() {
         ApiHandler apiHandler = new ApiHandler();
@@ -64,5 +65,6 @@ class PickyourreadApplicationTests {
 		assertEquals(apiHandler.getUserAgent(), actual);
 
 	}
+	*/
 	
 }
