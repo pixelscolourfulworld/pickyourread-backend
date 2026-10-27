@@ -40,7 +40,15 @@ public class ApiHandler {
     List<String> userAgent = new ArrayList<String>();
     ObjectMapper om = new ObjectMapper();
     HttpHeaders headers = new HttpHeaders(MultiValueMap.fromMultiValue(Map.of("user-agent",userAgent)));
-    RestTemplate restTemplate = new RestTemplate(); 
+    RestTemplate restTemplate = new RestTemplate();
+    List<String> fields = List.of(
+        "author_key",
+        "author_name",
+        "edition_count",
+        "key",
+        "series_key",
+        "series_name",
+        "title");
     
     public String getUserAgent() {
         return userAgent.get(0);
@@ -58,7 +66,7 @@ public class ApiHandler {
     protected ResponseEntity<Object> callSearch(String query) {
         URI uri;
         try {
-            uri = new URI("https://openlibrary.org/search.json?q=" + query);
+            uri = new URI("https://openlibrary.org/search.json?q=" + query.replaceAll(" ","+"));
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return new ResponseEntity<Object>(HttpStatusCode.valueOf(400));
@@ -94,7 +102,7 @@ public class ApiHandler {
         return om.convertValue(searchBookBody(query).get("docs"), HashMap[].class);
     }
 
-    public List<Book> searchBookList(String query) {
+    public List<ApiBook> searchBookList(String query) {
         return toBookArray(searchBookBooks(query));
     }
 
@@ -107,18 +115,16 @@ public class ApiHandler {
         return om.convertValue(re.getBody(), HashMap.class);
     }
 
-    protected List<Book> toBookArray(Map<String, Object>[] books) {
-        List<Book> result = new ArrayList<Book>();
+    protected List<ApiBook> toBookArray(Map<String, Object>[] books) {
+        List<ApiBook> result = new ArrayList<ApiBook>();
 
-        Stream.of(books).forEach(m -> result.add(new Book(m)));
+        Stream.of(books).forEach(m -> result.add(new ApiBook(m)));
 
         return result;
     }
 
     @CacheEvict("searchBook")
-    public void updateBook(Book b) throws CustomEntryException {
-        if (b.isCustEntry())
-            throw new CustomEntryException(b.getTitle() + " marked as custom entry. Not updating from api.");
+    public void updateBook(ApiBook b) throws CustomEntryException {
         b.update(searchBookBooks(b.getApiKey())[0]);
     }
 }

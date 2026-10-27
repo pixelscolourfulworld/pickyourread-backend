@@ -12,21 +12,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 
 @RestController
 public class PickyourreadController {
 
   ApiHandler apiHandler = new ApiHandler();
-  List<Book> books = new ArrayList<Book>();
+  List<ApiBook> books = new ArrayList<ApiBook>();
 
   @GetMapping("/")
   public List<Book> index() {
     return List.of(
-        new Book("The Tainted Cup", "Bennet, Robert Jackson"),
-        new Book("Throne of Glass", "Maas, Sarah J."),
-        new Book("Scythe", "Shusterman, Neil"));
+        new CustBook("The Tainted Cup", "Bennet, Robert Jackson"),
+        new CustBook("Throne of Glass", "Maas, Sarah J."),
+        new CustBook("Scythe", "Shusterman, Neil"));
   }
 
   @GetMapping("/dev/api/openlib/booksearch/")
@@ -39,8 +38,8 @@ public class PickyourreadController {
       case "body" : return apiHandler.searchBookBody(query);
       case "books" : return apiHandler.searchBookBooks(query);
       case "booklist" :
-        List<Book> booklistquery = apiHandler.searchBookList(query);
-        for (Book b : booklistquery) books.add(b); 
+        List<ApiBook> booklistquery = apiHandler.searchBookList(query);
+        for (ApiBook b : booklistquery) books.add(b); 
         return booklistquery;      
       case "bookentry1": return apiHandler.searchEntryKey(books.get(0).getApiKey());
       default:return "Test Query Not Found";
@@ -51,9 +50,9 @@ public class PickyourreadController {
   @RequestMapping("/dev/api/pickyourread/test")
   public ResponseEntity<List<Book>> requestMethodName() {
     List<Book> books = List.of(
-      new Book("Book 1","Author 1"),
-      new Book("Book 2","Author 2"),
-      new Book("Book 3","Author 3")
+      new CustBook("Book 1","Author 1"),
+      new CustBook("Book 2","Author 2"),
+      new CustBook("Book 3","Author 3")
     );
 
     try {
@@ -66,8 +65,8 @@ public class PickyourreadController {
   
 
   @GetMapping("/query")
-  public ResponseEntity<Object> getMethodName(@RequestParam("q") String query) {
-    return apiHandler.searchBook(query);
+  public List<ApiBook> getMethodName(@RequestParam("q") String query) {
+    return apiHandler.searchBookList(query);
   }
 
 }

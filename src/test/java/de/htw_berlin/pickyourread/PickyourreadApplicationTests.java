@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.FileReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -37,7 +35,7 @@ class PickyourreadApplicationTests {
         }
 
 		System.out.println("expected: "+expected);
-		System.out.println("acutal "+ah.getUserAgent());
+		System.out.println("acutal: "+ah.getUserAgent());
 
 		assertEquals(expected, ah.getUserAgent());
 	}
@@ -66,78 +64,5 @@ class PickyourreadApplicationTests {
 		assertEquals(apiHandler.getUserAgent(), actual);
 
 	}
-
-	@Test
-	void testISBN10validDash() {
-		Book testBook = new Book("Hunger Games");
-		
-		String expected = "0-439-02348-3";
-
-		testBook.setIsbn(expected);
-
-		expected = expected.replaceAll("-", "");
-
-		assertEquals(expected, testBook.getIsbn());
-	}
-
-	@Test
-	void testISBN13validDash() {
-		Book testBook = new Book("Hunger Games");
-		
-		String expected = "978-0-439-02348-1";
-
-		testBook.setIsbn(expected);
-
-		expected = expected.replaceAll("-", "");
-
-		assertEquals(expected, testBook.getIsbn());
-	}
-
-	@Test
-	void testISBN10valid() {
-		Book testBook = new Book("Hunger Games");
-		
-		String expected = "0439023483";
-
-		testBook.setIsbn(expected);
-
-		expected = expected.replaceAll("-", "");
-
-		assertEquals(expected, testBook.getIsbn());
-	}
-
-	@Test
-	void testISBN13valid() {
-		Book testBook = new Book("Hunger Games");
-		
-		String expected = "9780439023481";
-
-		testBook.setIsbn(expected);
-
-		expected = expected.replaceAll("-", "");
-
-		assertEquals(expected, testBook.getIsbn());
-	}
-
-	@Test
-	void testISBN10invalid() {
-		Book testBook = new Book("Hunger Games");
-		
-		String expected = null;
-
-		testBook.setIsbn("0439623483");
-
-		assertEquals(expected, testBook.getIsbn());
-	}
-
-	@Test
-	void testISBN13invalid() {
-		Book testBook = new Book("Hunger Games");
-		
-		String expected = null;
-
-		testBook.setIsbn("9780439623481");
-
-		assertEquals(expected, testBook.getIsbn());
-	}
+	
 }

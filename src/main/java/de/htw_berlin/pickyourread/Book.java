@@ -1,33 +1,48 @@
 package de.htw_berlin.pickyourread;
 
 import java.util.List;
-import java.util.Map;
 
 import de.htw_berlin.pickyourread.exceptions.InvalidISBNException;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.Date;
 
-public class Book {
+public abstract class Book {
 
     //======================
     //      Constructors
     //======================
     
+    public Book() {}
+
     public Book(String title) {
-        this.title = title;
-    }
-    
-    public Book(String title, String author) {
-        this.title = title;
-        this.author = author;
+        this.setTitle(title);
     }
 
-    public Book(Map<String,Object> bookData) {
-        ObjectMapper om = new ObjectMapper();
-        this.setTitle(om.convertValue(bookData.get("title"),String.class));
-        this.setCover(om.convertValue(bookData.get("cover_i"),String.class));
-        this.setApiKey(om.convertValue(bookData.get("key"), String.class));
+    public Book(String title, String author) {
+        this.setTitle(title);
+        this.setAuthor(author);
+    }
+
+
+    protected Book(Book b) {
+        title = b.title;
+        this.author = b.author;
+        this.isbn = b.isbn;
+        this.desc = b.desc;
+        this.publisher = b.publisher;
+        this.series = b.series;
+        this.cover = b.cover;
+        this.genre = b.genre;
+        this.tags = b.tags;
+        this.releaseDate = b.releaseDate;
+        this.format = b.format;
+
+        this.length = b.length;
+        this.read = b.read;
+        this.isEdition = b.isEdition;
+        this.isSeries = b.isSeries;
+        this.seriesSort = b.seriesSort;
+
     }
 
     //======================
@@ -39,18 +54,16 @@ public class Book {
     String isbn;
     String desc;
     String publisher;
-    String apiKey;
     String series;
-    String cover;
+    List<String> cover;
     List<String> genre;
     List<String> tags;
     Date releaseDate;
-    Date lastAPIRefresh;
     Format format;
     
     int length;
-    boolean custEntry;
     boolean read;
+    boolean isEdition;
     boolean isSeries;
     float seriesSort;
     
@@ -71,19 +84,11 @@ public class Book {
     public String getPublisher() {
         return publisher;
     }
-    public String getApiKey() {
-        return apiKey;
-    }
     public String getSeries() {
         return series;
     }
     public List<String> getCover() {
-        List<String> coverSizes = List.of(
-            "https://covers.openlibrary.org/b/id/"+cover+"-S.jpg",
-            "https://covers.openlibrary.org/b/id/"+cover+"-M.jpg",
-            "https://covers.openlibrary.org/b/id/"+cover+"-L.jpg"
-        );
-        return coverSizes;
+        return cover;
     }
     public List<String> getGenre() {
         return genre;
@@ -93,9 +98,6 @@ public class Book {
     }
     public Date getReleaseDate() {
         return releaseDate;
-    }
-    public Date getLastAPIRefresh() {
-        return lastAPIRefresh;
     }
     public Format getFormat() {
         return format;
@@ -110,9 +112,6 @@ public class Book {
         if (format != null) {
             return length+" "+format.getQuantifier();
         } else return length+" pages";
-    }
-    public boolean isCustEntry() {
-        return custEntry;
     }
     public boolean isRead() {
         return read;
@@ -140,15 +139,11 @@ public class Book {
     public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
-    }
     public void setSeries(String series) {
         this.series = series;
     }
-    public void setCover(String coverID) {
-        this.cover = coverID;
-    }
+    abstract public void setCover(String cover);
+
     public void setGenre(List<String> genre) {
         this.genre = genre;
     }
@@ -157,9 +152,6 @@ public class Book {
     }
     public void setReleaseDate(Date releaseDate) {
         this.releaseDate = releaseDate;
-    }
-    public void setLastAPIRefresh(Date lastAPIRefresh) {
-        this.lastAPIRefresh = lastAPIRefresh;
     }
     public void setFormat(Format format) {
         this.format = format;
@@ -176,9 +168,6 @@ public class Book {
     public void setLength(int length) {
         this.length = length;
     }
-    public void setCustEntry(boolean custEntry) {
-        this.custEntry = custEntry;
-    }
     public void setRead(boolean read) {
         this.read = read;
     }
@@ -193,7 +182,7 @@ public class Book {
     //      Checks
     //======================
 
-    private void checkISBN(String isbn) throws InvalidISBNException {
+    protected void checkISBN(String isbn) throws InvalidISBNException {
 
         String checkString = new String(isbn).replaceAll("-", "");
         
@@ -221,9 +210,5 @@ public class Book {
             if (checkSum % 11 != 0) throw invalid;
         }
 
-    }
-
-    public void update(Map<String,Object> bookData) { // TODO: update Bookdata from bookData-Map
-        //ObjectMapper om = new ObjectMapper();
     }
 }
