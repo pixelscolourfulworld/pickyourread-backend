@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 @SpringBootTest
@@ -40,23 +41,12 @@ class PickyourreadApplicationTests {
 		assertEquals(expected, ah.getUserAgent());
 	}
 
-	/*
+	
 	@Test
 	void testUserAgentHeader() {
         ApiHandler apiHandler = new ApiHandler();
-		ResponseEntity<Object> re;
-		URI uri;
-		String actual = "";
-		try {
-			uri = new URI("http://httpbin.org/user-agent");
-			re = apiHandler.testCall(uri);
-			Map<String,Object> result = apiHandler.responseToMap(re);
-			System.out.println(result);
-			actual = result.get("user-agent").toString();
-
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+		RequestEntity<Object> re = apiHandler.testCall();
+		String actual = re.getHeaders().get("user-agent").get(0);
 
 		for (String s:apiHandler.getHeaders().headerNames()){
 			System.out.println(s+": "+apiHandler.getHeaders().get(s));
@@ -65,6 +55,6 @@ class PickyourreadApplicationTests {
 		assertEquals(apiHandler.getUserAgent(), actual);
 
 	}
-	*/
+	
 	
 }

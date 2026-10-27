@@ -57,9 +57,13 @@ public class ApiHandler {
         return headers;
     }
 
-    public ResponseEntity<Object> testCall(URI uri) {
-        RequestEntity<Object> request = new RequestEntity<Object>(headers, HttpMethod.GET,uri);
-        return restTemplate.exchange(request, Object.class);
+    public RequestEntity<Object> testCall() {
+        URI testUri = null;
+        try {testUri = new URI("localhost:8080");}
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new RequestEntity<Object>(headers, HttpMethod.GET, testUri);
     }
 
     @Cacheable("searchAPI")
