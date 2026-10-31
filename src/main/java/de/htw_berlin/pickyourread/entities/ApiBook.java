@@ -1,9 +1,10 @@
-package de.htw_berlin.pickyourread;
+package de.htw_berlin.pickyourread.entities;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import de.htw_berlin.pickyourread.api.ApiWork;
 import tools.jackson.databind.ObjectMapper;
 
 public class ApiBook extends Book {
@@ -13,15 +14,21 @@ public class ApiBook extends Book {
 
         this.setTitle(om.convertValue(bookData.get("title"),String.class));
         this.setCover(om.convertValue(bookData.get("cover_i"),String.class));
-        this.setApiKey(om.convertValue(bookData.get("key"), String.class));
+        this.apiKey = om.convertValue(bookData.get("key"), String.class);
+    }
+
+    public ApiBook(ApiWork work, String apiKey) {
+        this.apiKey = apiKey;
+        this.apiWorkID = work.getApiKey();
     }
    
     //======================
     //      Attributes
     //======================
 
-    String apiKey;
-    Date lastAPIRefresh;
+    private String apiKey;
+    private String apiWorkID;
+    private LocalDate lastAPIRefresh;
     
     //======================
     //      Getters
@@ -31,19 +38,19 @@ public class ApiBook extends Book {
         return apiKey;
     }
     
-    public Date getLastAPIRefresh() {
+    public String getApiWorkID() {
+        return apiWorkID;
+    }
+
+    public LocalDate getLastAPIRefresh() {
         return lastAPIRefresh;
     }
     
     //======================
     //      Setters
     //======================
-
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
-    }
     
-    public void setLastAPIRefresh(Date lastAPIRefresh) {
+    public void setLastAPIRefresh(LocalDate lastAPIRefresh) {
         this.lastAPIRefresh = lastAPIRefresh;
     }
 

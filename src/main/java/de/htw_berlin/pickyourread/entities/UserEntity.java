@@ -1,4 +1,4 @@
-package de.htw_berlin.pickyourread;
+package de.htw_berlin.pickyourread.entities;
 
 import java.util.Date;
 

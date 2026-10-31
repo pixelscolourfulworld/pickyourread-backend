@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.RequestEntity;
 
+import de.htw_berlin.pickyourread.api.ApiHandler;
+
 @SpringBootTest
 class PickyourreadApplicationTests {
 

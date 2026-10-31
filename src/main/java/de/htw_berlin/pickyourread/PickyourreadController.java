@@ -11,6 +11,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import de.htw_berlin.pickyourread.api.ApiHandler;
+import de.htw_berlin.pickyourread.entities.ApiBook;
+import de.htw_berlin.pickyourread.entities.Book;
+import de.htw_berlin.pickyourread.entities.CustBook;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
@@ -42,6 +48,7 @@ public class PickyourreadController {
         for (ApiBook b : booklistquery) books.add(b); 
         return booklistquery;      
       case "bookentry1": return apiHandler.searchEntryKey(books.get(0).getApiKey());
+      case "editions": return apiHandler.searchEditions(books.get(0).getApiKey());
       default:return "Test Query Not Found";
     }
   }

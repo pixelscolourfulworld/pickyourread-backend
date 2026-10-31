@@ -1,13 +1,13 @@
-package de.htw_berlin.pickyourread;
+package de.htw_berlin.pickyourread.entities;
 
 import java.util.AbstractList;
 import java.util.Date;
 
 public class Booklist extends AbstractList<BooklistEntry> implements UserEntity{
 
-    Date dateCreated;
-    Date dateModified;
-    String title;
+    private Date dateCreated;
+    private Date dateModified;
+    private String title;
 
     @Override
     public BooklistEntry get(int index) {

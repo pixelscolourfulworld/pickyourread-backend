@@ -1,4 +1,4 @@
-package de.htw_berlin.pickyourread;
+package de.htw_berlin.pickyourread.entities;
 
 import java.util.Date;
 import java.util.List;
@@ -19,26 +19,32 @@ public class CustBook extends Book implements UserEntity {
         super(title, author);
     }
 
+
+    //======================
+    //      Attributes
+    //======================
+
+    private Date dateCreated;
+    private Date lastModified;
+    private User user;
+    
     //======================
     //      Getters
     //======================
 
     @Override
     public Date getDateInit() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDateInit'");
+        return this.dateCreated;
     }
 
     @Override
     public Date getDateMod() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDateMod'");
+        return lastModified;
     }
 
     @Override
     public User getUser() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUser'");
+        return this.user;
     }
 
     //======================

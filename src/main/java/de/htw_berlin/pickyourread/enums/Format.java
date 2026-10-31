@@ -1,4 +1,4 @@
-package de.htw_berlin.pickyourread;
+package de.htw_berlin.pickyourread.enums;
 
 public enum Format {
     Paperback("pages"), Hardcover("pages"), Audiobook("hours");

@@ -1,4 +1,4 @@
-package de.htw_berlin.pickyourread;
+package de.htw_berlin.pickyourread.api;
 
 import java.io.FileReader;
 import java.net.URI;
@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import de.htw_berlin.pickyourread.entities.ApiBook;
 import de.htw_berlin.pickyourread.exceptions.CustomEntryException;
 import tools.jackson.databind.ObjectMapper;
 
@@ -41,14 +42,7 @@ public class ApiHandler {
     ObjectMapper om = new ObjectMapper();
     HttpHeaders headers = new HttpHeaders(MultiValueMap.fromMultiValue(Map.of("user-agent",userAgent)));
     RestTemplate restTemplate = new RestTemplate();
-    List<String> fields = List.of(
-        "author_key",
-        "author_name",
-        "edition_count",
-        "key",
-        "series_key",
-        "series_name",
-        "title");
+    ResponseEntity<Object> errorResponse = new ResponseEntity<>(HttpStatusCode.valueOf(400));
     
     public String getUserAgent() {
         return userAgent.get(0);
@@ -58,12 +52,21 @@ public class ApiHandler {
     }
 
     /**
+     * Method to ensure Request is always created equal
+     * @param uri
+     * @return {@code RequestEntity<Object>}
+     */
+    private RequestEntity<Object> getRequest(URI uri) {
+        return new RequestEntity<>(headers, HttpMethod.GET, uri);
+    }
+
+    /**
      * Test method to see if RequestEntity gets built correctly
      * @return {@code RequestEntity<Object>} with headers, GET-Method and URI null
      */
     public RequestEntity<Object> testCall() {
         URI testUri = null;
-        return new RequestEntity<Object>(headers, HttpMethod.GET, testUri);
+        return getRequest(testUri);
     }
 
     /**
@@ -72,16 +75,15 @@ public class ApiHandler {
      * @return {@code ResponseEntity<Object>} returned from the API
      */
     @Cacheable("searchAPI")
-    protected ResponseEntity<Object> callSearch(String query) {
+    public ResponseEntity<Object> callSearch(String query) {
         URI uri;
         try {
             uri = new URI("https://openlibrary.org/search.json?q=" + query.replaceAll(" ","+")); // TODO: Encode Query to always be a legal URI
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            return new ResponseEntity<Object>(HttpStatusCode.valueOf(400));
+            return errorResponse;
         }
-        RequestEntity<Object> request = new RequestEntity<Object>(headers, HttpMethod.GET,uri);
-        return restTemplate.exchange(request, Object.class);
+        return restTemplate.exchange(getRequest(uri), Object.class);
     }
 
     /**
@@ -96,11 +98,26 @@ public class ApiHandler {
             uri = new URI("https://openlibrary.org" + key + ".json");
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            return new ResponseEntity<Object>(HttpStatusCode.valueOf(400));
+            return errorResponse;
         }
-        RequestEntity<Object> request = new RequestEntity<Object>(headers,
-                HttpMethod.GET, uri);
-        return restTemplate.exchange(request, Object.class);
+        return restTemplate.exchange(getRequest(uri), Object.class);
+    }
+
+    /**
+     * sends GET-Request to the editions.json API of the openlibrary.org-site of the Work defined by _apiKey_
+     * @param apiKey An API-Key for a WORK
+     * @return {@code ResponseEntity<Object>} of the editions
+     */
+    public ResponseEntity<Object> callEditionsByWork(String apiKey) {
+        URI uri;
+        try {
+            uri = new URI("https://openlibrary.org"+apiKey+"/editions.json");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return errorResponse;
+        }
+
+        return restTemplate.exchange(getRequest(uri), Object.class);
     }
 
     /**
@@ -139,6 +156,15 @@ public class ApiHandler {
     public Map<String, Object> searchEntryKey(String key) {
         return responseToMap(callWorkByKey(key));
     }
+
+    /**
+     * Calls the {@code callEditionsByWork()} function with a Key and returns the result in a {@code Map<String, Object>} using {@code responseToMap()}
+     * @param key
+     * @return {@code Map<String, Object>}
+     */
+    public Map<String, Object> searchEditions(String key) {
+        return responseToMap(callEditionsByWork(key));
+    }
     
     
     /**
@@ -169,4 +195,5 @@ public class ApiHandler {
     public void updateBook(ApiBook b) throws CustomEntryException {
         b.update(searchBookBooks(b.getApiKey())[0]);
     }
+    
 }

@@ -1,10 +1,11 @@
-package de.htw_berlin.pickyourread;
+package de.htw_berlin.pickyourread.entities;
 
 import java.util.List;
 
+import de.htw_berlin.pickyourread.enums.Format;
 import de.htw_berlin.pickyourread.exceptions.InvalidISBNException;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public abstract class Book {
 
@@ -39,7 +40,6 @@ public abstract class Book {
 
         this.length = b.length;
         this.read = b.read;
-        this.isEdition = b.isEdition;
         this.isSeries = b.isSeries;
         this.seriesSort = b.seriesSort;
 
@@ -49,23 +49,21 @@ public abstract class Book {
     //      Attributes
     //======================
 
-    String title;
-    String author;
-    String isbn;
-    String desc;
-    String publisher;
-    String series;
-    List<String> cover;
-    List<String> genre;
-    List<String> tags;
-    Date releaseDate;
-    Format format;
-    
-    int length;
-    boolean read;
-    boolean isEdition;
-    boolean isSeries;
-    float seriesSort;
+    protected String title;
+    protected String author;
+    protected String isbn;
+    protected String desc;
+    protected String publisher;
+    protected String series;
+    protected List<String> cover;
+    protected List<String> genre;
+    protected List<String> tags;
+    protected LocalDate releaseDate;
+    protected Format format;
+    protected int length;
+    protected boolean read;
+    protected boolean isSeries;
+    protected float seriesSort;
     
     //======================
     //      Getters
@@ -96,7 +94,7 @@ public abstract class Book {
     public List<String> getTags() {
         return tags;
     }
-    public Date getReleaseDate() {
+    public LocalDate getReleaseDate() {
         return releaseDate;
     }
     public Format getFormat() {
@@ -150,7 +148,7 @@ public abstract class Book {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
-    public void setReleaseDate(Date releaseDate) {
+    public void setReleaseDate(LocalDate releaseDate) {
         this.releaseDate = releaseDate;
     }
     public void setFormat(Format format) {
