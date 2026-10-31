@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -38,8 +37,8 @@ public class ApiHandler {
         }
     }
 
+    ResponseHandler handler = new ResponseHandler();
     List<String> userAgent = new ArrayList<String>();
-    ObjectMapper om = new ObjectMapper();
     HttpHeaders headers = new HttpHeaders(MultiValueMap.fromMultiValue(Map.of("user-agent",userAgent)));
     RestTemplate restTemplate = new RestTemplate();
     ResponseEntity<Object> errorResponse = new ResponseEntity<>(HttpStatusCode.valueOf(400));
@@ -126,7 +125,7 @@ public class ApiHandler {
      * @return {@code Map<String, Object>}
      */
     public Map<String, Object> searchBookBody(String query) {
-        return responseToMap(callSearch(query));
+        return handler.responseToMap(callSearch(query));
     }
 
     /**
@@ -136,6 +135,7 @@ public class ApiHandler {
      */
     @SuppressWarnings("unchecked") // TODO: Check Conversion
     public Map<String, Object>[] searchBookBooks(String query) {
+        ObjectMapper om = new ObjectMapper();
         return om.convertValue(searchBookBody(query).get("docs"), HashMap[].class);
     }
 
@@ -145,7 +145,7 @@ public class ApiHandler {
      * @return {@code List<ApiBook>}
      */
     public List<ApiBook> searchBookList(String query) {
-        return toBookArray(searchBookBooks(query));
+        return handler.toBookArray(searchBookBooks(query));
     }
 
     /**
@@ -154,7 +154,7 @@ public class ApiHandler {
      * @return {@code Map<String, Object>}
      */
     public Map<String, Object> searchEntryKey(String key) {
-        return responseToMap(callWorkByKey(key));
+        return handler.responseToMap(callWorkByKey(key));
     }
 
     /**
@@ -163,33 +163,11 @@ public class ApiHandler {
      * @return {@code Map<String, Object>}
      */
     public Map<String, Object> searchEditions(String key) {
-        return responseToMap(callEditionsByWork(key));
+        return handler.responseToMap(callEditionsByWork(key));
     }
     
     
-    /**
-     * Takes a {@code ResponseEntity} and converts it into a {@code Map<String, Object>}
-     * @param re {@code ResponseEntity}
-     * @return {@code Map<String, Object>}
-     */
-    @SuppressWarnings("unchecked") // TODO: Check Conversion
-    protected Map<String, Object> responseToMap(ResponseEntity<Object> re) {
-        return om.convertValue(re.getBody(), HashMap.class);
-    }
-
-
-    /**
-     * Used to convert API Results into a list of {@code ApiBooks}
-     * @param books
-     * @return {@code List<ApiBooks>}
-     */
-    protected List<ApiBook> toBookArray(Map<String, Object>[] books) {
-        List<ApiBook> result = new ArrayList<ApiBook>();
-
-        Stream.of(books).forEach(m -> result.add(new ApiBook(m)));
-
-        return result;
-    }
+    
 
     @CacheEvict("searchBook")
     public void updateBook(ApiBook b) throws CustomEntryException {
