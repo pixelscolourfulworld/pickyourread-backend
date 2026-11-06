@@ -21,17 +21,7 @@ class PickyourreadApplicationTests {
 	void testApiHandlerUserAgent() {
 		ApiHandler ah = new ApiHandler();
 
-		String expected;
-
-		try {
-            FileReader fr = new FileReader("src/main/resources/static/useragent.txt");
-            expected = fr.readAllAsString();
-            fr.close();
-            
-        } catch (Exception e) {
-			expected = "Error 404: File not Found";
-            e.printStackTrace();
-        }
+		String expected = System.getenv("user_agent");
 
 		System.out.println("expected: "+expected);
 		System.out.println("acutal: "+ah.getUserAgent());

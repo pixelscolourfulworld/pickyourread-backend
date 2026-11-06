@@ -30,11 +30,7 @@ public class ApiHandler {
      * the contents of {@code src/main/resources/static/useragent.txt}
      */
     public ApiHandler() {
-        try (FileReader fr = new FileReader("src/main/resources/static/useragent.txt")) {
-            userAgent.add(fr.readAllAsString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        userAgent.add(System.getenv("user_agent"));
     }
 
     ResponseHandler handler = new ResponseHandler();
