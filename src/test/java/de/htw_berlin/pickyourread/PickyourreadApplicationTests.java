@@ -2,8 +2,6 @@ package de.htw_berlin.pickyourread;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.FileReader;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.RequestEntity;

@@ -1,20 +1,46 @@
 package de.htw_berlin.pickyourread.api;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.http.ResponseEntity;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import de.htw_berlin.pickyourread.entities.ApiBook;
-import tools.jackson.databind.ObjectMapper;
 
 public class ApiWork {
 
-    public ApiWork(String apiKey, String title, Map<String, String> author, String coverEditionKey,
+    public ApiWork(String apiKey, String title, String description, List<String> authorKey, List<String> authorName, String coverEditionKey,
+            int releaseYear, List<String> seriesKey, List<String> seriesName, List<String> seriesPos) {
+                this.apiKey = apiKey;
+                this.title = title;
+                this.description = description;
+                if(coverEditionKey == null) {
+                    this.cover = null;
+                } else setCover(coverEditionKey);
+                this.releaseYear = releaseYear;
+
+                Map<String,String> author = zipToMap(authorKey, authorName);
+
+                this.author = author;
+
+                Map<String,Map<String,String>> series;
+                
+                if(seriesKey == null || seriesName == null || seriesPos == null) {
+                    series = null;
+                } else {
+                    series = zipToPropMap(seriesKey, "seriesName", seriesName,"seriesPos", seriesPos);
+                }
+
+                this.series = series;
+            }
+
+    public ApiWork(String apiKey, String title, String description, Map<String, String> author, String coverEditionKey,
             int releaseYear, Map<String,Map<String,String>> series) {
                 this.apiKey = apiKey;
                 this.title = title;
+                this.description = description;
                 this.author = author;
                 if(coverEditionKey == null) {
                     this.cover = null;
@@ -29,6 +55,7 @@ public class ApiWork {
 
     private String apiKey;
     private String title;
+    private String description;
     private Map<String,String> author;
     private Map<String,String> cover;
     private int releaseYear;
@@ -64,6 +91,9 @@ public class ApiWork {
     public Map<String,Map<String,String>> getSeries() {
         return series;
     }
+    public String getDesc() {
+        return description;
+    }
     //======================
     //      Setters
     //======================
@@ -78,15 +108,11 @@ public class ApiWork {
         this.cover = coverSizes;
     }
 
-    public List<ApiBook> fetchEditions(ApiHandler api, ResponseHandler response) {
+    public ApiBookResponse fetchEditions(ApiHandler api) {
 
-        ResponseEntity<Object> e = api.callEditionsByWork(this.apiKey);
+        ApiBookResponse response = api.callEditionsByWork(this);
 
-        List<ApiBook> re = response.toEditionList(response.responseToMap(e));
-
-        editions = re;
-
-        return editions;
+        return response;
     }
 
     @Override
@@ -130,4 +156,27 @@ public class ApiWork {
             && seriesSame;
     }
 
+    private static <K, V> Map<K, V> zipToMap(List<K> keys, List<V> values) {
+        try {
+            return IntStream.range(0, keys.size()).boxed().collect(Collectors.toMap(keys::get, values::get));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static <K, V> Map<K, Map<String, V>> zipToPropMap(List<K> keys, String prop1, List<V> values1, String prop2, List<V> values2) {
+        List<Map<String, V>> props = new ArrayList<Map<String, V>>(0);
+        
+        Iterator<V> it1 = values1.iterator();
+        Iterator<V> it2 = values2.iterator();
+
+        while( it1.hasNext() && it2.hasNext()) {
+            props.add(Map.of(prop1, it1.next(), prop2, it2.next()));
+        }
+        
+
+        return zipToMap(keys, props);
+    }
+    
 }

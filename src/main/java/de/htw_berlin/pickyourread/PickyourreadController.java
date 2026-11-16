@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.htw_berlin.pickyourread.api.ApiHandler;
+import de.htw_berlin.pickyourread.api.ApiWork;
 import de.htw_berlin.pickyourread.entities.ApiBook;
 import de.htw_berlin.pickyourread.entities.Book;
 import de.htw_berlin.pickyourread.entities.CustBook;
@@ -34,6 +35,7 @@ public class PickyourreadController {
         new CustBook("Scythe", "Shusterman, Neil"));
   }
 
+  @CrossOrigin 
   @GetMapping("/dev/api/openlib/booksearch/")
   public Object testQueryBooksearchFull(@RequestParam("test") String test) {
 
@@ -41,14 +43,9 @@ public class PickyourreadController {
 
     switch (test) {
       case "full" : return apiHandler.callSearch(query);
-      case "body" : return apiHandler.searchBookBody(query);
-      case "books" : return apiHandler.searchBookBooks(query);
-      case "booklist" :
-        List<ApiBook> booklistquery = apiHandler.searchBookList(query);
-        for (ApiBook b : booklistquery) books.add(b); 
-        return booklistquery;      
-      case "bookentry1": return apiHandler.searchEntryKey(books.get(0).getApiKey());
-      case "editions": return apiHandler.searchEditions(books.get(0).getApiKey());
+      case "docs" : return apiHandler.callSearch(query).getDocs();
+      case "works" : return apiHandler.callSearch(query).makeApiWorks();
+      case "editions": return apiHandler.callSearch(query).makeApiWorks().get(0).fetchEditions(apiHandler).makeApiBooks();
       default:return "Test Query Not Found";
     }
   }
@@ -72,8 +69,8 @@ public class PickyourreadController {
   
 
   @GetMapping("/query")
-  public List<ApiBook> getMethodName(@RequestParam("q") String query) {
-    return apiHandler.searchBookList(query);
+  public List<ApiWork> getMethodName(@RequestParam("q") String query) {
+    return apiHandler.callSearch(query).makeApiWorks();
   }
 
 }

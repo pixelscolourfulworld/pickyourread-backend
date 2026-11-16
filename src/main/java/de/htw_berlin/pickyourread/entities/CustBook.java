@@ -1,7 +1,11 @@
 package de.htw_berlin.pickyourread.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class CustBook extends Book implements UserEntity {
 
@@ -64,8 +68,37 @@ public class CustBook extends Book implements UserEntity {
     }
 
     @Override
-    public void setCover(String cover) {
-        this.cover = List.of(cover);
+    protected void setCover(String cover) {
+        this.cover = Map.of("Custom",cover);
+    }
+    
+    protected void setAuthor(String authors) {
+        Iterator<String> authorIterator = List.of(authors.split(",")).iterator();
+        List<String> authorList = new ArrayList<String>();
+        while(authorIterator.hasNext()) {
+            authorList.add("N/A");
+            authorList.add(authorIterator.next()); 
+        }
+
+        this.setAuthor((String[]) authorList.toArray());
+    }
+
+    protected void setAuthor(String... authors) {
+        if(authors.length % 2 != 0) throw new IllegalArgumentException();
+
+        List<String> authorList = List.of(authors);
+        
+        List<Entry<String,String>> entryList = new ArrayList<Entry<String,String>>();
+
+        Iterator<String> a = authorList.iterator();
+
+        while(a.hasNext()) {
+            entryList.add(Map.entry(a.next(),a.next()));
+        }
+
+        Map<String,String> authorMap = Map.ofEntries();
+
+        this.author = authorMap;
     }
 
 }

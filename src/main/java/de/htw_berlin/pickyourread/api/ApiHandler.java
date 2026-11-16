@@ -1,14 +1,11 @@
 package de.htw_berlin.pickyourread.api;
 
-import java.io.FileReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,10 +14,6 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import de.htw_berlin.pickyourread.entities.ApiBook;
-import de.htw_berlin.pickyourread.exceptions.CustomEntryException;
-import tools.jackson.databind.ObjectMapper;
 
 
 public class ApiHandler {
@@ -33,7 +26,6 @@ public class ApiHandler {
         userAgent.add(System.getenv("user_agent"));
     }
 
-    ResponseHandler handler = new ResponseHandler();
     List<String> userAgent = new ArrayList<String>();
     HttpHeaders headers = new HttpHeaders(MultiValueMap.fromMultiValue(Map.of("user-agent",userAgent)));
     RestTemplate restTemplate = new RestTemplate();
@@ -70,15 +62,15 @@ public class ApiHandler {
      * @return {@code ResponseEntity<Object>} returned from the API
      */
     @Cacheable("searchAPI")
-    public ResponseEntity<Object> callSearch(String query) {
+    public ApiWorkResponse callSearch(String query) {
         URI uri;
         try {
             uri = new URI("https://openlibrary.org/search.json?q=" + query.replaceAll(" ","+")); // TODO: Encode Query to always be a legal URI
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            return errorResponse;
+            return null;
         }
-        return restTemplate.exchange(getRequest(uri), Object.class);
+        return new ApiWorkResponse(restTemplate.exchange(getRequest(uri), Object.class));
     }
 
     /**
@@ -87,15 +79,15 @@ public class ApiHandler {
      * @return {@code ResponseEntity<Object>} of the work
      */
     @Cacheable("worksAPI")
-    public ResponseEntity<Object> callWorkByKey(String key) {
+    public ApiWorkResponse callWorkByKey(String key) {
         URI uri;
         try {
             uri = new URI("https://openlibrary.org" + key + ".json");
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            return errorResponse;
+            return null;
         }
-        return restTemplate.exchange(getRequest(uri), Object.class);
+        return new ApiWorkResponse(restTemplate.exchange(getRequest(uri), Object.class));
     }
 
     /**
@@ -103,71 +95,16 @@ public class ApiHandler {
      * @param apiKey An API-Key for a WORK
      * @return {@code ResponseEntity<Object>} of the editions
      */
-    public ResponseEntity<Object> callEditionsByWork(String apiKey) {
+    public ApiBookResponse callEditionsByWork(ApiWork work) {
         URI uri;
         try {
-            uri = new URI("https://openlibrary.org"+apiKey+"/editions.json");
+            uri = new URI("https://openlibrary.org/works/"+work.getApiKey()+"/editions.json");
         } catch (Exception e) {
             e.printStackTrace();
-            return errorResponse;
+            return null;
         }
 
-        return restTemplate.exchange(getRequest(uri), Object.class);
-    }
-
-    /**
-     * Calls the {@code callSearch()} function with query and returns the result in a {@code Map<String, Object>}
-     * @param query
-     * @return {@code Map<String, Object>}
-     */
-    public Map<String, Object> searchBookBody(String query) {
-        return handler.responseToMap(callSearch(query));
-    }
-
-    /**
-     * Calls the {@code searchBookBody()} function with query and returns the found works in a {@code Map<String, Object>}
-     * @param query
-     * @return {@code Map<String, Object>}
-     */
-    @SuppressWarnings("unchecked") // TODO: Check Conversion
-    public Map<String, Object>[] searchBookBooks(String query) {
-        ObjectMapper om = new ObjectMapper();
-        return om.convertValue(searchBookBody(query).get("docs"), HashMap[].class);
-    }
-
-    /**
-     * Calls the {@code searchBookBooks()} function with query and turns the result into a {@code List<ApiBook>}
-     * @param query
-     * @return {@code List<ApiBook>}
-     */
-    public List<ApiBook> searchBookList(String query) {
-        return handler.toBookArray(searchBookBooks(query));
-    }
-
-    /**
-     * Calls the {@code callWorkByKey()} function with a Key and returns the result in a {@code Map<String, Object>} using {@code responseToMap()}
-     * @param key
-     * @return {@code Map<String, Object>}
-     */
-    public Map<String, Object> searchEntryKey(String key) {
-        return handler.responseToMap(callWorkByKey(key));
-    }
-
-    /**
-     * Calls the {@code callEditionsByWork()} function with a Key and returns the result in a {@code Map<String, Object>} using {@code responseToMap()}
-     * @param key
-     * @return {@code Map<String, Object>}
-     */
-    public Map<String, Object> searchEditions(String key) {
-        return handler.responseToMap(callEditionsByWork(key));
-    }
-    
-    
-    
-
-    @CacheEvict("searchBook")
-    public void updateBook(ApiBook b) throws CustomEntryException {
-        b.update(searchBookBooks(b.getApiKey())[0]);
+        return new ApiBookResponse(work, restTemplate.exchange(getRequest(uri), Object.class));
     }
     
 }

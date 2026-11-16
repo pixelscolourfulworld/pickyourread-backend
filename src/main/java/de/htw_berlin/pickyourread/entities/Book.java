@@ -1,6 +1,7 @@
 package de.htw_berlin.pickyourread.entities;
 
 import java.util.List;
+import java.util.Map;
 
 import de.htw_berlin.pickyourread.enums.Format;
 import de.htw_berlin.pickyourread.exceptions.InvalidISBNException;
@@ -13,22 +14,41 @@ public abstract class Book {
     //      Constructors
     //======================
     
-    public Book() {}
+    public Book(String title, Map<String, String> author, String isbn10, String isbn13, String desc, String publisher,
+            Map<String, Map<String, String>> series, String cover, List<String> genre, List<String> tags,
+            LocalDate releaseDate, Format format, int length) {
+        this.title = title;
+        this.author = author;
+        this.setIsbn(isbn10, isbn13);
+        this.desc = desc;
+        this.publisher = publisher;
+        this.series = series;
+        this.setCover(cover);
+        this.genre = genre;
+        this.tags = tags;
+        this.releaseDate = releaseDate;
+        this.format = format;
+        this.length = length;
+    }
 
     public Book(String title) {
-        this.setTitle(title);
+        this.title = title;
     }
 
     public Book(String title, String author) {
-        this.setTitle(title);
-        this.setAuthor(author);
+        this.title = title;
+        this.author = Map.of("N/A", author);
+    }
+    
+    public Book() {
+        
     }
 
 
     protected Book(Book b) {
-        title = b.title;
+        this.title = b.title;
         this.author = b.author;
-        this.isbn = b.isbn;
+        this.setIsbn(b.isbn10, b.isbn13);
         this.desc = b.desc;
         this.publisher = b.publisher;
         this.series = b.series;
@@ -37,12 +57,7 @@ public abstract class Book {
         this.tags = b.tags;
         this.releaseDate = b.releaseDate;
         this.format = b.format;
-
         this.length = b.length;
-        this.read = b.read;
-        this.isSeries = b.isSeries;
-        this.seriesSort = b.seriesSort;
-
     }
 
     //======================
@@ -50,20 +65,20 @@ public abstract class Book {
     //======================
 
     protected String title;
-    protected String author;
-    protected String isbn;
+    protected Map<String,String> author;
+    
+    protected String isbn10;
+    protected String isbn13;
     protected String desc;
     protected String publisher;
-    protected String series;
-    protected List<String> cover;
+    protected Map<String,Map<String,String>> series;
+    protected Map<String,String> cover;
+    
     protected List<String> genre;
     protected List<String> tags;
     protected LocalDate releaseDate;
     protected Format format;
     protected int length;
-    protected boolean read;
-    protected boolean isSeries;
-    protected float seriesSort;
     
     //======================
     //      Getters
@@ -73,7 +88,7 @@ public abstract class Book {
     public String getTitle() {
         return title;
     }
-    public String getAuthor() {
+    public Map<String,String> getAuthor() {
         return author;
     }
     public String getDesc() {
@@ -82,10 +97,10 @@ public abstract class Book {
     public String getPublisher() {
         return publisher;
     }
-    public String getSeries() {
+    public Map<String,Map<String,String>> getSeries() {
         return series;
     }
-    public List<String> getCover() {
+    public Map<String,String> getCover() {
         return cover;
     }
     public List<String> getGenre() {
@@ -100,8 +115,11 @@ public abstract class Book {
     public Format getFormat() {
         return format;
     }
-    public String getIsbn() {
-        return isbn;
+    public String getIsbn10() {
+        return isbn10;
+    }
+    public String getIsbn13() {
+        return isbn13;
     }
     public int getLength() {
         return length;
@@ -111,77 +129,44 @@ public abstract class Book {
             return length+" "+format.getQuantifier();
         } else return length+" pages";
     }
-    public boolean isRead() {
-        return read;
-    }
-    public boolean isSeries() {
-        return isSeries;
-    }
-    public float getSeriesSort() {
-        return seriesSort;
-    }
     
     //======================
     //      Setters
     //======================
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
-    }
-    public void setSeries(String series) {
-        this.series = series;
-    }
-    abstract public void setCover(String cover);
-
-    public void setGenre(List<String> genre) {
-        this.genre = genre;
-    }
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
-    public void setReleaseDate(LocalDate releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-    public void setFormat(Format format) {
-        this.format = format;
-    }
-    public void setIsbn(String isbn) {
+    
+    public void setIsbn(String isbn10, String isbn13) {
         try {
-            checkISBN(isbn);
-            this.isbn = new String(isbn).replaceAll("-", "");
+            checkISBN(isbn10);
+            this.isbn10 = new String(isbn10).replaceAll("-", "");
         } catch (InvalidISBNException e) {
             System.out.println(e.getMessage()+" ISBN-attribute remains unchanged.");
             return;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            checkISBN(isbn13);
+            this.isbn13 = new String(isbn13).replaceAll("-", "");
+        } catch (InvalidISBNException e) {
+            System.out.println(e.getMessage()+" ISBN-attribute remains unchanged.");
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-    public void setLength(int length) {
-        this.length = length;
-    }
-    public void setRead(boolean read) {
-        this.read = read;
-    }
-    public void setSeries(boolean isSeries) {
-        this.isSeries = isSeries;
-    }
-    public void setSeriesSort(float seriesSort) {
-        this.seriesSort = seriesSort;
-    }
     
+    protected void setSeries(Map<String, Map<String, String>> series) {
+        this.series = series;
+    }
+
+    abstract void setCover(String cover);
+
     //======================
     //      Checks
     //======================
 
     protected void checkISBN(String isbn) throws InvalidISBNException {
-
         String checkString = new String(isbn).replaceAll("-", "");
         
         InvalidISBNException invalid = new InvalidISBNException(checkString+" is not a valid ISBN.");
@@ -207,6 +192,72 @@ public abstract class Book {
             }
             if (checkSum % 11 != 0) throw invalid;
         }
-
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        // checking if the two objects
+        // pointing to same object
+        if (this == obj)
+            return true;
+
+        // checking for two condition:
+        // 1) object is pointing to null
+        // 2) if the objects belong to
+        // same class or not
+        if (obj == null
+            || this.getClass() != obj.getClass())
+            return false;
+
+        Book b1 = (Book)obj; // type casting object to the
+                           // intended class type
+
+        boolean coverSame;
+        if (cover == null || b1.cover == null) {
+            coverSame = this.getCover() == b1.getCover(); 
+        } else {
+            coverSame = this.getCover().equals(b1.getCover());
+        }
+
+        boolean seriesSame;
+        if (series == null || b1.series == null) {
+            seriesSame = this.getSeries() == b1.getSeries(); 
+        } else {
+            seriesSame = this.getSeries().equals(b1.getSeries());
+        }
+
+        boolean rdSame = this.getReleaseDate() == null ? b1.getReleaseDate() == null : this.getReleaseDate().equals(b1.getReleaseDate());
+        boolean isbn10Same = this.getIsbn10() == null ? b1.getIsbn10() == null : this.getIsbn10().equals(b1.getIsbn10());
+        boolean isbn13Same = this.getIsbn13() == null ? b1.getIsbn13() == null : this.getIsbn13().equals(b1.getIsbn13());
+        boolean descSame = this.getDesc() == null ? b1.getDesc() == null : this.getDesc().equals(b1.getDesc());
+        boolean pubSame = this.getPublisher() == null ? b1.getPublisher() == null : this.getPublisher().equals(b1.getPublisher());
+
+        return this.getAuthor().equals(b1.getAuthor())
+            && this.getTitle().equals(b1.getTitle())
+            && rdSame
+            && isbn10Same
+            && isbn13Same
+            && descSame
+            && pubSame
+            && coverSame
+            && seriesSame;
+    }
+
+    public void print() {
+        System.out.println("title: "+title);
+        System.out.println("author: "+author);    
+        System.out.println("isbn10: "+isbn10);
+        System.out.println("isbn13: "+isbn13);
+        System.out.println("desc: "+desc);
+        System.out.println("publisher: "+publisher);
+        System.out.println("series: "+series);
+        System.out.println("cover: "+cover);
+        System.out.println("genre: "+genre);
+        System.out.println("tags: "+tags);
+        System.out.println("releaseDate: "+releaseDate);
+        System.out.println("format: "+format);
+        System.out.println("length: "+length);
+    }
+
 }

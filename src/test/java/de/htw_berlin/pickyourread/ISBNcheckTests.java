@@ -16,11 +16,11 @@ class ISBNcheckTests {
 		
 		String expected = "0-439-02348-3";
 
-		testBook.setIsbn(expected);
+		testBook.setIsbn(expected, null);
 
 		expected = expected.replaceAll("-", "");
 
-		assertEquals(expected, testBook.getIsbn());
+		assertEquals(expected, testBook.getIsbn10());
 	}
 
 	@Test
@@ -29,11 +29,11 @@ class ISBNcheckTests {
 		
 		String expected = "978-0-439-02348-1";
 
-		testBook.setIsbn(expected);
+		testBook.setIsbn(null, expected);
 
 		expected = expected.replaceAll("-", "");
 
-		assertEquals(expected, testBook.getIsbn());
+		assertEquals(expected, testBook.getIsbn13());
 	}
 
 	@Test
@@ -42,11 +42,11 @@ class ISBNcheckTests {
 		
 		String expected = "0439023483";
 
-		testBook.setIsbn(expected);
+		testBook.setIsbn(expected, null);
 
 		expected = expected.replaceAll("-", "");
 
-		assertEquals(expected, testBook.getIsbn());
+		assertEquals(expected, testBook.getIsbn10());
 	}
 
 	@Test
@@ -55,11 +55,11 @@ class ISBNcheckTests {
 		
 		String expected = "9780439023481";
 
-		testBook.setIsbn(expected);
+		testBook.setIsbn(null, expected);
 
 		expected = expected.replaceAll("-", "");
 
-		assertEquals(expected, testBook.getIsbn());
+		assertEquals(expected, testBook.getIsbn13());
 	}
 
 	@Test
@@ -68,9 +68,9 @@ class ISBNcheckTests {
 		
 		String expected = null;
 
-		testBook.setIsbn("0439623483");
+		testBook.setIsbn("0439623483", null);
 
-		assertEquals(expected, testBook.getIsbn());
+		assertEquals(expected, testBook.getIsbn10());
 	}
 
 	@Test
@@ -79,8 +79,8 @@ class ISBNcheckTests {
 		
 		String expected = null;
 
-		testBook.setIsbn("9780439623481");
+		testBook.setIsbn(null, "9780439623481");
 
-		assertEquals(expected, testBook.getIsbn());
+		assertEquals(expected, testBook.getIsbn13());
 	}
 }
