@@ -68,7 +68,7 @@ public class CustBook extends Book implements UserEntity {
     }
 
     @Override
-    protected void setCover(String cover) {
+    public void setCover(String cover) {
         this.cover = Map.of("Custom",cover);
     }
     

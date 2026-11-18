@@ -1,4 +1,4 @@
-package de.htw_berlin.pickyourread.api;
+package de.htw_berlin.pickyourread.api.openlib;
 
 import java.util.ArrayList;
 import java.util.List;

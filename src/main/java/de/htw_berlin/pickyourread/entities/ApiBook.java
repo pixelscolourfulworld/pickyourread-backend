@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import de.htw_berlin.pickyourread.api.ApiWork;
+import de.htw_berlin.pickyourread.api.openlib.ApiWork;
 import de.htw_berlin.pickyourread.enums.Format;
 import tools.jackson.databind.ObjectMapper;
 

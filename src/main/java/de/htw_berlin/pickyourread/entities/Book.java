@@ -100,8 +100,29 @@ public abstract class Book {
     public Map<String,Map<String,String>> getSeries() {
         return series;
     }
-    public Map<String,String> getCover() {
+    public Map<String,String> getCovers() {
         return cover;
+    }
+    public String getCoverS() {
+        if (cover == null) {
+            return null;
+        } else if (cover.containsKey("s")) {
+            return cover.get("s");
+        } else return cover.get(cover.keySet().iterator().next());
+    } 
+    public String getCoverM() {
+        if (cover == null) {
+            return null;
+        } else if (cover.containsKey("s")) {
+            return cover.get("m");
+        } else return cover.get(cover.keySet().iterator().next());
+    }
+    public String getCoverL() {
+        if (cover == null) {
+            return null;
+        } else if (cover.containsKey("s")) {
+            return cover.get("l");
+        } else return cover.get(cover.keySet().iterator().next());
     }
     public List<String> getGenre() {
         return genre;
@@ -160,7 +181,7 @@ public abstract class Book {
         this.series = series;
     }
 
-    abstract void setCover(String cover);
+    public abstract void setCover(String cover);
 
     //======================
     //      Checks
@@ -215,9 +236,9 @@ public abstract class Book {
 
         boolean coverSame;
         if (cover == null || b1.cover == null) {
-            coverSame = this.getCover() == b1.getCover(); 
+            coverSame = this.getCovers() == b1.getCovers(); 
         } else {
-            coverSame = this.getCover().equals(b1.getCover());
+            coverSame = this.getCovers().equals(b1.getCovers());
         }
 
         boolean seriesSame;

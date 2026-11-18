@@ -14,15 +14,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
-import de.htw_berlin.pickyourread.api.ApiWorkResponse;
-import de.htw_berlin.pickyourread.api.ApiBookResponse;
-import de.htw_berlin.pickyourread.api.ApiWork;
+import de.htw_berlin.pickyourread.api.openlib.ApiBookResponse;
+import de.htw_berlin.pickyourread.api.openlib.ApiWork;
+import de.htw_berlin.pickyourread.api.openlib.ApiWorkResponse;
 import de.htw_berlin.pickyourread.entities.ApiBook;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 @SpringBootTest
-class ResponseHandlerTests {
+class OpenlibResponseTests {
 
         List<ApiWork> testWorks;
         List<ApiBook> testBooks;

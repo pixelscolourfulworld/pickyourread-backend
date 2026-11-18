@@ -1,4 +1,4 @@
-package de.htw_berlin.pickyourread.api;
+package de.htw_berlin.pickyourread.api.openlib;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import de.htw_berlin.pickyourread.api.ApiHandler;
 import de.htw_berlin.pickyourread.entities.ApiBook;
 
 public class ApiWork {

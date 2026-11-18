@@ -1,4 +1,4 @@
-package de.htw_berlin.pickyourread;
+package de.htw_berlin.pickyourread.controllers;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -13,30 +13,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.htw_berlin.pickyourread.api.ApiHandler;
-import de.htw_berlin.pickyourread.api.ApiWork;
+import de.htw_berlin.pickyourread.api.openlib.ApiWork;
 import de.htw_berlin.pickyourread.entities.ApiBook;
 import de.htw_berlin.pickyourread.entities.Book;
 import de.htw_berlin.pickyourread.entities.CustBook;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 
-
+/**
+ * DevController
+ * 
+ * <br/><br/> Controller for testing. Reachable under /dev
+ */
 @RestController
-public class PickyourreadController {
+@RequestMapping ("/dev")
+public class DevController {
 
   ApiHandler apiHandler = new ApiHandler();
   List<ApiBook> books = new ArrayList<ApiBook>();
 
-  @GetMapping("/")
+  @GetMapping("/test")
   public List<Book> index() {
+
+    Book ttc = new CustBook("The Tainted Cup", "Bennet, Robert Jackson");
+    ttc.setCover("testtesttest");
+    
     return List.of(
-        new CustBook("The Tainted Cup", "Bennet, Robert Jackson"),
+        ttc,
         new CustBook("Throne of Glass", "Maas, Sarah J."),
         new CustBook("Scythe", "Shusterman, Neil"));
   }
 
   @CrossOrigin 
-  @GetMapping("/dev/api/openlib/booksearch/")
+  @GetMapping("/api/openlib/booksearch/")
   public Object testQueryBooksearchFull(@RequestParam("test") String test) {
 
     String query = "the+lord+of+the+rings";
@@ -51,7 +60,7 @@ public class PickyourreadController {
   }
 
   @CrossOrigin 
-  @RequestMapping("/dev/api/pickyourread/test")
+  @RequestMapping("/api/pickyourread/test")
   public ResponseEntity<List<Book>> requestMethodName() {
     List<Book> books = List.of(
       new CustBook("Book 1","Author 1"),

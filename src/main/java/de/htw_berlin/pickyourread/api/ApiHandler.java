@@ -15,6 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import de.htw_berlin.pickyourread.api.openlib.ApiBookResponse;
+import de.htw_berlin.pickyourread.api.openlib.ApiWork;
+import de.htw_berlin.pickyourread.api.openlib.ApiWorkResponse;
+
 
 public class ApiHandler {
 
